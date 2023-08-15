@@ -13,11 +13,10 @@ async function generateBotResponse(messages, responsePrompt) {
   const requestData = {
     messages: messages,
     model: 'gpt-3.5-turbo',
-    max_tokens: 250,
+    max_tokens: 450,
     temperature: 0.9,
-    frequency_penalty: 0.7,
+    frequency_penalty: 1.0,
     n: 1,
-    stop: '\n',
     prompt: responsePrompt
   };
 

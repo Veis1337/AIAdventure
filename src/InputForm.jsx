@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { generateBotResponse } from './utils/openai';
+import React, { useState } from "react";
+import { generateBotResponse } from "./utils/openai";
+import '../index.css';
 
 const InputForm = ({ onStoryGenerated }) => {
-  const [name, setName] = useState('');
-  const [appearance, setAppearance] = useState('');
-  const [scenario, setScenario] = useState('');
-  const [botResponse, setBotResponse] = useState('');
-  const [userReply, setUserReply] = useState(''); // User's reply
-  const [conversationHistory, setConversationHistory] = useState([]); // Conversation history
+  const [name, setName] = useState("");
+  const [appearance, setAppearance] = useState("");
+  const [scenario, setScenario] = useState("");
+  const [botResponse, setBotResponse] = useState("");
+  const [userReply, setUserReply] = useState("");
+  const [conversationHistory, setConversationHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,65 +17,164 @@ const InputForm = ({ onStoryGenerated }) => {
     const responsePrompt = `User: ${JSON.stringify(userInputs)}\n`;
 
     try {
-      // Construct messages array with conversation history and user reply
+      setIsLoading(true);
       const messages = [
-        { role: 'system', content: 
-          'You are a helpful assistant that generates a roleplay for the user. You will create an adventure for the user based on what they have input into the Scenario form.  Introduce new characters as it pertains to the story.  When a character is introduced, include vivid descriptions including their physical appearance, clothing, and demeanor.  When the user speaks to a character, write 1 reply only in internet RP style, italicize actions, and avoid quotation marks. Use markdown. Do not ever speak for the User in these interactions.  End each response in a way so that the user can decide what their character does next, not totally open ended so that they have to take the reigns.  Write 1 reply only in internet RP style, italicize actions, and avoid quotation marks. Use markdown. Be proactive, creative, and drive the plot and conversation forward. Introduce random events to engage the user further.  Write at least 1 paragraph, up to 5.' 
+        {
+          role: "system",
+          content: `
+You are a helpful AI assistant that guides users through an interactive roleplay story.
+The User will give their name, a description of their appearance, and the scenario they want to generate a story around. 
+Your role is to respond to user inputs and drive the plot forward by providing vivid descriptions, character interactions, and multiple options for the user to choose from. 
+Keep the tone engaging and maintain the narrative flow.
+Each response should follow this structure:
+1. Start with a vivid description of the scene or setting.
+2. Introduce any characters besides the User present with detailed descriptions.
+3. For character dialogue, use quotation marks and provide meaningful responses.
+4. Italicize character actions to make them stand out.
+5. Provide five (not six!) different options for the user to choose from, numbered 1 to 5. Make the 5th selection a bizarre scenario that could shake up the story.
+6. Make the options diverse, including actions, dialogue, or unexpected events.
+7. The user will reply with a number to select their chosen option to drive the adventure forward.
+`,
         },
-        ...conversationHistory, // Include conversation history
-        { role: 'user', content: userReply }, // Include user's reply
-        { role: 'assistant', content: `${responsePrompt}` }
+        ...conversationHistory,
+        { role: "user", content: userReply },
+        { role: "assistant", content: `${responsePrompt}` },
       ];
 
       const botResponse = await generateBotResponse(messages);
-      setBotResponse(botResponse.choices[0].message.content);
-      onStoryGenerated(botResponse.choices[0].message.content);
+      const responseContent = botResponse.choices[0].message.content;
 
-      // Update conversation history with user reply and bot response
+      setBotResponse(responseContent);
+
       setConversationHistory([
         ...conversationHistory,
-        { role: 'user', content: userReply },
-        { role: 'assistant', content: botResponse.choices[0].message.content }
+        { role: "user", content: userReply },
+        { role: "assistant", content: responseContent },
       ]);
+
+      onStoryGenerated((prevStory) => {
+        const newStory = prevStory + "\n" + responseContent;
+        return newStory;
+      });
     } catch (error) {
-      console.error('Error generating bot response:', error);
+      console.error("Error generating bot response:", error);
+    } finally {
+      setIsLoading(false);
     }
+    setUserReply("");
+  };
+
+  const handleSummarizeClick = async (e) => {
+    e.preventDefault();
+    const userInputs = { name, appearance, scenario };
+    const responsePrompt = `User: ${JSON.stringify(userInputs)}\n`;
+
+    try {
+      setIsLoading(true);
+      const messages = [
+        {
+          role: "system",
+          content: `
+You are a helpful AI assistant that guides users through an interactive roleplay story. The user is asking for a summary of the story so far. Do NOT include the five options in this summary like in the other messages.
+`,
+        },
+        ...conversationHistory,
+        {
+          role: "user",
+          content:
+            "Summarize the story so far in as much detail as possible using 430 tokens. Do NOT include choices for proceeding like in our other messages.",
+        },
+        { role: "assistant", content: `${responsePrompt}` },
+      ];
+
+      const botResponse = await generateBotResponse(messages);
+      const responseContent = botResponse.choices[0].message.content;
+
+      setBotResponse(responseContent);
+
+      setConversationHistory([
+        ...conversationHistory,
+        { role: "user", content: userReply },
+        { role: "assistant", content: responseContent },
+      ]);
+
+      onStoryGenerated((prevStory) => {
+        const newStory = prevStory + "\n" + responseContent;
+        return newStory;
+      });
+    } catch (error) {
+      console.error("Error generating bot response:", error);
+    } finally {
+      setIsLoading(false);
+    }
+    setUserReply("Repeat your last response before the summary was requested.");
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Name:
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-      </label>
-      <label>
-        Appearance:
-        <input type="text" value={appearance} onChange={(e) => setAppearance(e.target.value)} />
-      </label>
-      <label>
-        Scenario:
-        <input type="text" value={scenario} onChange={(e) => setScenario(e.target.value)} />
-      </label>
-
-      {/* User reply input */}
-      <label>
-        What do you do next?
+    <form onSubmit={handleSubmit} className="container mx-auto mt-6 form-container">
+      <label className="form-label">
+        What is your - or your character's - name?
         <input
           type="text"
-          value={userReply}
-          onChange={(e) => setUserReply(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="form-input"
+        />
+      </label>
+      <label className="form-label">
+        Brief description of appearance
+        <input
+          type="text"
+          value={appearance}
+          onChange={(e) => setAppearance(e.target.value)}
+          className="form-input"
+        />
+      </label>
+      <label className="form-label">
+        Choose your adventure!  Example - I'm going on a blind date
+        <input
+          type="text"
+          value={scenario}
+          onChange={(e) => setScenario(e.target.value)}
+          className="form-input"
         />
       </label>
 
-      <button type="submit">Generate Story</button>
-      
-      {/* Display the bot response */}
       {botResponse && (
-        <div>
-          <h2>Generated Story:</h2>
-          <p>{botResponse}</p>
+        <div className="bot-response-container mt-4">
+          <h2 className="bot-response-title">Generated Story -- </h2>
+          {botResponse.split("\n").map((paragraph, index) => (
+            <p key={index} className="bot-response-paragraph">{paragraph}</p>
+          ))}
         </div>
       )}
+
+      <label className="form-label mt-4">
+        Number Selection
+        <input
+          type="text"
+          placeholder="Leave blank for first submission"
+          value={userReply}
+          onChange={(e) => setUserReply(e.target.value)}
+          className="form-input"
+        />
+      </label>
+
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="form-button mt-4"
+      >
+        {isLoading ? <span className="loading-icon">&#9696;</span> : "Submit"}
+      </button>
+
+      <button
+        type="button"
+        onClick={handleSummarizeClick}
+        className="form-button mt-4"
+      >
+        Summarize The Story So Far
+      </button>
     </form>
   );
 };
