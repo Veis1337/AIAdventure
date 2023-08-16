@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { generateBotResponse } from "./utils/openai";
-import '../index.css';
+import "../index.css";
 
 const InputForm = ({ onStoryGenerated }) => {
   const [name, setName] = useState("");
@@ -34,6 +34,7 @@ Each response should follow this structure:
 5. Provide five (not six!) different options for the user to choose from, numbered 1 to 5. Make the 5th selection a bizarre scenario that could shake up the story.
 6. Make the options diverse, including actions, dialogue, or unexpected events.
 7. The user will reply with a number to select their chosen option to drive the adventure forward.
+8. ONLY reference the option that the user selected.  All other options should be discarded from the history of the roleplay and never referenced. 
 `,
         },
         ...conversationHistory,
@@ -67,7 +68,9 @@ Each response should follow this structure:
   const handleSummarizeClick = async (e) => {
     e.preventDefault();
     const userInputs = { name, appearance, scenario };
-    const responsePrompt = `User: ${JSON.stringify(userInputs)}\n`;
+    const responsePrompt = `This is some info about the User, and the original starting prompt for the adventure. Please only reference this for the first message exchange: ${JSON.stringify(
+      userInputs
+    )}\n`;
 
     try {
       setIsLoading(true);
@@ -111,7 +114,10 @@ You are a helpful AI assistant that guides users through an interactive roleplay
   };
 
   return (
-    <form onSubmit={handleSubmit} className="container mx-auto mt-6 form-container">
+    <form
+      onSubmit={handleSubmit}
+      className="container mx-auto mt-6 form-container"
+    >
       <label className="form-label">
         What is your - or your character's - name?
         <input
@@ -131,7 +137,7 @@ You are a helpful AI assistant that guides users through an interactive roleplay
         />
       </label>
       <label className="form-label">
-        Choose your adventure!  Example - I'm going on a blind date
+        Choose your adventure! Example - I'm going on a blind date
         <input
           type="text"
           value={scenario}
@@ -144,7 +150,9 @@ You are a helpful AI assistant that guides users through an interactive roleplay
         <div className="bot-response-container mt-4">
           <h2 className="bot-response-title">Generated Story -- </h2>
           {botResponse.split("\n").map((paragraph, index) => (
-            <p key={index} className="bot-response-paragraph">{paragraph}</p>
+            <p key={index} className="bot-response-paragraph">
+              {paragraph}
+            </p>
           ))}
         </div>
       )}
@@ -160,11 +168,7 @@ You are a helpful AI assistant that guides users through an interactive roleplay
         />
       </label>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="form-button mt-4"
-      >
+      <button type="submit" disabled={isLoading} className="form-button mt-4">
         {isLoading ? <span className="loading-icon">&#9696;</span> : "Submit"}
       </button>
 
