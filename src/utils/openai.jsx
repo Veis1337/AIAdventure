@@ -2,10 +2,12 @@ import axios from 'axios';
 
 const API_URL = 'https://api.openai.com/v1/chat/completions';
 
+
+
 async function generateBotResponse(messages, responsePrompt) {
   const headers = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+    'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
   };
 
   const requestData = {
