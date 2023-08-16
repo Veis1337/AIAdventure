@@ -113,7 +113,7 @@ Each response should follow this structure:
     } finally {
       setIsLoading(false);
     }
-    setUserReply("Repeat your last response before the summary was requested.");
+    setUserReply("((OOC: Repeat the most recent message and options prior to this one.))");
   };
 
   const handleFixClick = async (e) => {
@@ -188,7 +188,7 @@ Each response should follow this structure:
         />
       </label>
       <label className="form-label">
-        Choose your adventure! Example - I'm going on a blind date at a bar.
+        Choose your adventure! Example - I'm going on a blind date at a bar... or I'm a level 1 warrior embarking on a fantasy adventure filled with bustling towns, engaging quests, dangerous combat, and lots of loot!
         <input
           type="text"
           value={scenario}

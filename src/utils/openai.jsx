@@ -22,7 +22,6 @@ async function generateBotResponse(messages, responsePrompt) {
 
   try {
     const response = await axios.post(API_URL, requestData, { headers });
-    console.log('this is response.data', response.data);
     return response.data;
   } catch (error) {
     console.error(error);
