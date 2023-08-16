@@ -6,11 +6,12 @@
   "scripts": {
     "build": "vite build",
     "start": "react-scripts start",
+    "dev": "vite",
     "deploy": "npm run build && git push",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
-  },
-  
+  }
+  ,
   "dependencies": {
     "axios": "^1.4.0",
     "postcss": "^8.4.27",
