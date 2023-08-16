@@ -14,7 +14,7 @@ const InputForm = ({ onStoryGenerated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userInputs = { name, appearance, scenario };
-    const responsePrompt = `User: ${JSON.stringify(userInputs)}\n`;
+    const responsePrompt = `This is some info about the User, and the original starting prompt for the adventure. Please only reference this for the first message exchange: ${JSON.stringify(userInputs)}\n`;
 
     try {
       setIsLoading(true);
@@ -113,6 +113,54 @@ You are a helpful AI assistant that guides users through an interactive roleplay
     setUserReply("Repeat your last response before the summary was requested.");
   };
 
+  const handleFixClick = async (e) => {
+    e.preventDefault();
+    const userInputs = { name, appearance, scenario };
+    const responsePrompt = `((OOC: Bot, why did you go back to the start of the roleplay?  Please revert back to where we left off before you malfunctioned.)): ${JSON.stringify(
+      userInputs
+    )}\n`;
+
+    try {
+      setIsLoading(true);
+      const messages = [
+        {
+          role: "system",
+          content: `
+          ((OOC: Bot, why did you go back to the start of the roleplay?  Please revert back to where we left off before you malfunctioned.))
+`,
+        },
+        ...conversationHistory,
+        {
+          role: "user",
+          content:
+            "((OOC: Bot, why did you go back to the start of the roleplay?  Please revert back to where we left off before you malfunctioned.))",
+        },
+        { role: "assistant", content: `${responsePrompt}` },
+      ];
+
+      const botResponse = await generateBotResponse(messages);
+      const responseContent = botResponse.choices[0].message.content;
+
+      setBotResponse(responseContent);
+
+      setConversationHistory([
+        ...conversationHistory,
+        { role: "user", content: userReply },
+        { role: "assistant", content: responseContent },
+      ]);
+
+      onStoryGenerated((prevStory) => {
+        const newStory = prevStory + "\n" + responseContent;
+        return newStory;
+      });
+    } catch (error) {
+      console.error("Error generating bot response:", error);
+    } finally {
+      setIsLoading(false);
+    }
+    setUserReply("");
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -179,6 +227,13 @@ You are a helpful AI assistant that guides users through an interactive roleplay
       >
         Summarize The Story So Far
       </button>
+      {/* <button
+        type="button"
+        onClick={handleFixClick}
+        className="form-button mt-4"
+      >
+        Fix the bot - bot has been known to revert back to start of story. Fix it!
+      </button> */}
     </form>
   );
 };
