@@ -17,7 +17,7 @@ function App() {
       With a user-friendly interface and a touch of magic, AI Adventure is your gateway to an enchanting world where your imagination takes center stage. 
       Whether you're a seasoned storyteller or a curious explorer, dive into the realm of AI-driven storytelling and let your imagination run wild!
         </p>
-        <p className="bot-response-paragraph text-center text-xs">Pro Tip - If you want to cheat, simply type out a new answer into the "Choose your adventure!" section...
+        <p className="bot-response-paragraph text-center text-xs">Pro Tip - If you want to cheat, simply type out a new answer into the Number Selection input...
         But nobody likes a cheater. Enjoy your adventure!</p>
 
       <InputForm onStoryGenerated={setStory} />

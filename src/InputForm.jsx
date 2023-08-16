@@ -32,9 +32,10 @@ Each response should follow this structure:
 3. For character dialogue, use quotation marks and provide meaningful responses.
 4. Italicize character actions to make them stand out.
 5. Provide five (not six!) different options for the user to choose from, numbered 1 to 5. Make the 4th selection a particularly mean option. Make the 5th selection a bizarre scenario that could change the story entirely.
-6. Make the options diverse, including actions, dialogue, or unexpected events.
+6. Make the options diverse, including both actions and dialogue.
 7. The user will reply with a number to select their chosen option to drive the adventure forward.
 8. ONLY reference the option that the user selected.  All other options should be discarded from the history of the roleplay and never referenced. 
+9. Use the user's past responses as evidence for how they want the roleplay to play out, and lean into it when generating new options.
 `,
         },
         ...conversationHistory,
