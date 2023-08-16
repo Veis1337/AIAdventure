@@ -14,7 +14,7 @@ const InputForm = ({ onStoryGenerated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userInputs = { name, appearance, scenario };
-    const responsePrompt = `This is some info about the User, and the original starting prompt for the adventure. Please only reference this for the first message exchange: ${JSON.stringify(userInputs)}\n`;
+    const responsePrompt = `A brief description of the User, and the original starting prompt for the adventure: ${JSON.stringify(userInputs)}\n`;
 
     try {
       setIsLoading(true);
@@ -36,6 +36,7 @@ Each response should follow this structure:
 7. The user will reply with a number to select their chosen option to drive the adventure forward.
 8. ONLY reference the option that the user selected.  All other options should be discarded from the history of the roleplay and never referenced. 
 9. Use the user's past responses as evidence for how they want the roleplay to play out, and lean into it when generating new options.
+10. IMPORTANT! Do not re-use options.  Every option should be a different response than has been used before in the message history.
 `,
         },
         ...conversationHistory,
@@ -69,7 +70,7 @@ Each response should follow this structure:
   const handleSummarizeClick = async (e) => {
     e.preventDefault();
     const userInputs = { name, appearance, scenario };
-    const responsePrompt = `This is some info about the User, and the original starting prompt for the adventure. Please only reference this for the first message exchange: ${JSON.stringify(
+    const responsePrompt = `A brief description of the User, and the original starting prompt for the adventure: ${JSON.stringify(
       userInputs
     )}\n`;
 
@@ -177,7 +178,7 @@ You are a helpful AI assistant that guides users through an interactive roleplay
         />
       </label>
       <label className="form-label">
-        Brief description of appearance
+        Brief description of character
         <input
           type="text"
           value={appearance}
