@@ -7,9 +7,15 @@
     "build": "vite build",
     "start": "react-scripts start",
     "dev": "vite",
-    "deploy": "npm run build && git push",
+    "deploy": "npm run build-heroku && git push heroku main",
+    "build-heroku": "vite build && cp index.html dist/",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
+  },
+  "vite": {
+    "build": {
+      "outDir": "dist"
+    }
   }
   ,
   "dependencies": {
