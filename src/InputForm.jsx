@@ -71,7 +71,7 @@ Each response should follow this structure:
   const handleSummarizeClick = async (e) => {
     e.preventDefault();
     const userInputs = { name, appearance, scenario };
-    const responsePrompt = `The user is asking for a summary of the story so far. Do NOT include the five options in this summary like in the other messages. Use the messages history to summarize the story so far in as much detail as possible using 430 tokens. A brief description of the User, and the original starting prompt for the adventure: ${JSON.stringify(
+    const responsePrompt = `The user is asking for a summary of the story so far. Do NOT include the five options in this summary like in the other messages. Use the messages history to summarize the story so far in as much detail as possible using 430 tokens.A brief description of the User, and the original starting prompt for the adventure: ${JSON.stringify(
       userInputs
     )}\n`;
 
@@ -81,7 +81,7 @@ Each response should follow this structure:
         {
           role: "system",
           content: `
-The user is asking for a summary of the story so far. Do NOT include the five options in this summary like in the other messages. Use the messages history to summarize the story so far in as much detail as possible using 430 tokens.
+          The user is asking for a summary of the story so far. Do NOT include the five options in this summary like in the other messages. Use the messages history to summarize the story so far in as much detail as possible using 430 tokens.
 `,
         },
         ...conversationHistory,
